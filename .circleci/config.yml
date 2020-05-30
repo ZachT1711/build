@@ -1,46 +1,13 @@
-version: 2.0
-jobs:
-  build:
-    docker:
-      - image: circleci/ruby:2.3.3
-    working_directory: ~/work
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-gems-{{ checksum "Gemfile.lock" }}
-      - run:
-          name: Install dependencies
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y zlib1g-dev libbz2-dev default-jre
-      - run:
-          name: Install and deploy
-          command: |
-            cp config.yml.sample config.yml
-            bundle install --path vendor/bundle
-            bundle exec rake deploy:build
-            echo $CIRCLE_SHA1 | cut -c1-7 > .build_rev
-            tar jcf build.tar.bz2 * .build_rev .build_time
-      - store_artifacts:
-          path: /home/circleci/work/build.tar.bz2
-      - save_cache:
-          key: v1-gems-{{ checksum "Gemfile.lock" }}
-          paths:
-            - /home/circleci/work/vendor/bundle
-
-# webhooks are undocumented and won't work for circleci 2.1
-# https://github.com/circleci/circleci-docs/issues/2411
-notify:
-  webhooks:
-    - url: "http://staging.build.opendatakit.org:5566/deploy"
-experimental:
-  notify:
-    branches:
-      only:
-        - "staging"
-
+# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+# Use a package of configuration called an orb.
+orbs:
+  # Declare a dependency on the welcome-orb
+  welcome: circleci/welcome-orb@0.4.1
+# Orchestrate or schedule a set of jobs
 workflows:
-  version: 2
-  build:
+  # Name the workflow "welcome"
+  welcome:
+    # Run the welcome/run job in its own container
     jobs:
-      - build
+      - welcome/run
