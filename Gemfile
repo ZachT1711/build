@@ -1,11 +1,11 @@
 source 'https://rubygems.org'
 
-gem 'rake'
+gem 'rake', '>= 12.3.3'
 
-gem 'ffi', '1.0.9'
+gem 'ffi', '1.9.24'
 gem 'sequel', '>= 4.42'
 gem 'pg', '>= 0.18'
-gem 'sinatra', '1.2.6'
+gem 'sinatra', '2.2.0'
 gem 'pony', '1.3'
 gem 'warden', '1.0.6'
 gem 'deep_merge', '1.1.1'
